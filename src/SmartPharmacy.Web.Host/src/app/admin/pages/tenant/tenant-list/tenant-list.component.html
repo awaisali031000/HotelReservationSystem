@@ -1,0 +1,341 @@
+<nz-card
+  [nzBordered]="false"
+  nzTitle="{{ 'Tenant' | localize }}"
+  [nzExtra]="actionTemplate"
+>
+  <div nz-row>
+    <div nz-col nzXs="24" nzSm="24" nzMd="6">
+      <nz-form-item>
+        <nz-form-control>
+          <input
+            nz-input
+            name="search"
+            placeholder="{{ 'Search' | localize }}"
+            (change)="searchValue($event)"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzXs="24" nzSm="24" nzMd="6" nzOffset="1">
+      <nz-form-item>
+        <nz-form-control>
+          <label
+            nz-checkbox
+            (nzCheckedChange)="activeTenantOnlyChangeHandler($event)"
+            >{{ "IsActive" | localize }}</label
+          >
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <nz-table
+    class="m-t-20"
+    nzShowSizeChanger
+    [nzFrontPagination]="false"
+    [nzData]="tenants"
+    [nzTotal]="totalItems"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNumber"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    [nzFooter]="tableFooterTemplate"
+    [nzLoading]="isTableLoading"
+  >
+    <thead>
+      <tr>
+        <th>{{ "SerialNumber" | localize }}</th>
+        <th>{{ "TenancyName" | localize }}</th>
+        <th>{{ "Name" | localize }}</th>
+        <th>{{ "IsActive" | localize }}</th>
+        <th>{{ "Actions" | localize }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tenant of tenants">
+        <td>{{ tenant.id }}</td>
+        <td>{{ tenant.tenancyName }}</td>
+        <td>{{ tenant.name }}</td>
+        <td>
+          <nz-badge
+            *ngIf="tenant.isActive; else inactiveBadge"
+            nzStatus="success"
+            nzText="Active"
+          ></nz-badge>
+        </td>
+
+        <td>
+          <nz-space>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Edit' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                (click)="editTenant(tenant)"
+                nzType="primary"
+              >
+                <i nz-icon nzType="edit" nzTheme="outline"></i>
+              </button>
+              <a
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'SeeAuditLog' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                [routerLink]="['/admin/audit-log']"
+                [queryParams]="{ tenantId: tenant.id }"
+                nzType="primary"
+              >
+                <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+              </a>
+              <a
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'SeeUser' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                [routerLink]="['/admin/tenant-user-list']"
+                [queryParams]="{ tenantId: tenant.id }"
+                nzType="primary"
+              >
+                <i nz-icon nzType="user" nzTheme="outline"></i>
+              </a>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'ManageFeature' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                (click)="openFeatureManagementDrawer(tenant.id)"
+                nz-button
+                nzType="primary"
+              >
+                <i nz-icon nzType="setting" nzTheme="outline"></i>
+              </button>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Delete' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nzDanger
+                nz-button
+                nzType="primary"
+                (click)="showConfirm(tenant.id)"
+              >
+                <i nz-icon nzType="delete" nzTheme="outline"></i>
+              </button>
+          </nz-space>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #inactiveBadge>
+  <nz-badge nzStatus="error" nzText="InActive"></nz-badge>
+</ng-template>
+
+<ng-template #actionTemplate>
+  <nz-space>
+    <button *nzSpaceItem nz-button nzType="primary" (click)="refreshPage()">
+      <i nz-icon nzType="reload"></i>
+      {{ "RefreshPage" | localize }}
+    </button>
+    <button *nzSpaceItem nz-button nzType="primary" (click)="refreshTable()">
+      <i nz-icon nzType="reload"></i>
+      {{ "RefreshTable" | localize }}
+    </button>
+      <button
+        *nzSpaceItem
+        nz-button
+        nzType="primary"
+        (click)="openCreateTenantDrawer()"
+      >
+        <i nz-icon nzType="plus"></i>
+        {{ "CreateTenant" | localize }}
+      </button>
+  </nz-space>
+</ng-template>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isCreateTenantDrawerVisible"
+  nzPlacement="right"
+  nzTitle="{{ 'TenantManager' | localize }}"
+  (nzOnClose)="closeCreateTenantDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      nz-form
+      nzLayout="vertical"
+      [formGroup]="tenantForm"
+      (ngSubmit)="tenantFormSubmit()"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "TenancyName" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'PleaseEnterTenancyName' | localize }}">
+          <input
+            nz-input
+            formControlName="tenancyName"
+            placeholder="{{ 'TenancyName' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "Name" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'PleaseEnterName' | localize }}">
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="{{ 'Name' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="adminEmailAddress">{{
+          "EmailAddress" | localize
+        }}</nz-form-label>
+        <nz-form-control
+          nzErrorTip="{{ 'PleaseEnterEmailAddress' | localize }}"
+        >
+          <input
+            type="text"
+            nz-input
+            formControlName="adminEmailAddress"
+            [(ngModel)]="emailValue"
+            placeholder="EmailAddress"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="edition">{{
+          "Edition" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'EditionIsRequired' | localize }}">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="{{ 'SelectAnEdition' | localize }}"
+            formControlName="edition"
+          >
+            <nz-option
+              *ngFor="let edition of editionList"
+              nzLabel="{{ edition.displayName }}"
+              nzValue="{{ edition.id }}"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control>
+          <label nz-checkbox [(ngModel)]="checked" formControlName="isActive">{{
+            "IsActive" | localize
+          }}</label>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" [nzLoading]="isTenantFormSaving">
+            {{ "Save" | localize }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-drawer>
+
+<ng-template class="text-left" #tableFooterTemplate>
+  {{ "TotalRecordsCount" | localize : totalItems }}
+</ng-template>
+
+<ng-template #actionTemplate>
+  <button nz-button nzType="primary" (click)="openFeatureManagementDrawer()">
+    <i nz-icon nzType="plus"></i>
+  </button>
+</ng-template>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isFeatureManagementDrawerVisible"
+  nzPlacement="right"
+  nzTitle="{{ 'FeatureManagement' | localize }}"
+  (nzOnClose)="closeFeatureManagementDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      nz-form
+      nzLayout="vertical"
+      [formGroup]="featureForm"
+      (ngSubmit)="featureFormSubmit()"
+    >
+      <ng-container
+        *ngFor="
+          let formControlItem of featureFormControlItems.controls;
+          let i = index
+        "
+        formArrayName="features"
+      >
+        <nz-form-item [formGroupName]="i">
+          <ng-container
+            *ngIf="
+              formControlItem['value'].value === 'false' ||
+              formControlItem['value'].value === 'true'
+            "
+          >
+            <nz-form-label>
+              {{
+                formControlItem.controls["name"].value | localize
+              }}</nz-form-label
+            >
+            <nz-select formControlName="value">
+              <nz-option
+                nzValue="true"
+                nzLabel="{{ 'true' | localize }}"
+              ></nz-option>
+              <nz-option
+                nzValue="false"
+                nzLabel="{{ 'false' | localize }}"
+              ></nz-option>
+            </nz-select>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              formControlItem['value'].value !== 'false' &&
+              formControlItem['value'].value !== 'true'
+            "
+          >
+            <nz-form-label>{{
+              formControlItem.controls["name"].value | localize
+            }}</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                formControlName="value"
+                placeholder="{{
+                  formControlItem.controls['name'].value | localize
+                }}"
+              />
+            </nz-form-control>
+          </ng-container>
+        </nz-form-item>
+      </ng-container>
+      <nz-form-item>
+        <nz-form-control>
+          <button
+            nz-button
+            nzType="primary"
+            [nzLoading]="isManageFeatureFormSaving"
+          >
+            {{ "Save" | localize }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-drawer>

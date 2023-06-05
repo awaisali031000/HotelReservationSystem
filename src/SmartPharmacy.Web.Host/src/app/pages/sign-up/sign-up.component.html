@@ -1,0 +1,89 @@
+<nz-row>
+  <div nz-col nzXs="24" nzSm="24" nzMd="16">
+    <div class="center min-screen-full-height">
+      <form
+        nz-form
+        nzLayout="vertical"
+        class="login-form"
+        [formGroup]="signUpForm"
+        (ngSubmit)="submitSignUpForm()"
+      >
+        <h1 class="sp-28 center m-b-30" nz-typography>SIGN UP</h1>
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="TenancyName"
+            >TenancyName</nz-form-label
+          >
+          <nz-form-control nzErrorTip="TenancyName">
+            <nz-input-group>
+              <input
+                nz-input
+                formControlName="tenancyName"
+                placeholder="TenancyName"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="Name">Name</nz-form-label>
+          <nz-form-control nzErrorTip="Name">
+            <nz-input-group>
+              <input nz-input formControlName="name" placeholder="Name" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="EmailAddress"
+            >EmailAddress</nz-form-label
+          >
+          <nz-form-control nzErrorTip="EmailAddress">
+            <input
+              nz-input
+              formControlName="adminEmailAddress"
+              placeholder="EmailAddress"
+            />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="SelectAnEdition"
+            >SelectAnEdition</nz-form-label
+          >
+          <nz-form-control nzErrorTip="SelectAnEdition">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="SelectAnEdition"
+              formControlName="edition"
+            >
+              <nz-option
+                *ngFor="let edition of editionList"
+                nzLabel="{{ edition.displayName }}"
+                nzValue="{{ edition.id }}"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <label nz-checkbox [(ngModel)]="checked" formControlName="isActive"
+              >IsActive</label
+            >
+          </nz-form-control>
+        </nz-form-item>
+
+        <div nz-row>
+          <div nz-col nzSpan="4">
+            <button
+              nz-button
+              nzType="primary"
+              class="buttonCss"
+              [nzLoading]="isSignUpFormSaving"
+              [routerLink]="['login']"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</nz-row>

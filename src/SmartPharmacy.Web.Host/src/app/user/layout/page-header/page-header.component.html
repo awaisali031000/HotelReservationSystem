@@ -1,0 +1,5 @@
+<nz-breadcrumb nz-page-header-breadcrumb>
+  <nz-breadcrumb-item *ngFor="let breadcrumb of pageHeaderInfo.breadcrumb">
+    <a [routerLink]="[breadcrumb.path]">{{ breadcrumb.title }}</a>
+  </nz-breadcrumb-item>
+</nz-breadcrumb>

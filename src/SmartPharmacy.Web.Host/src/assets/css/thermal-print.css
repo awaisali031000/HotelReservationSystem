@@ -1,0 +1,78 @@
+@media print {
+    * {
+        font-size: 35px;
+    }
+
+    img{
+        width: 200px;
+        margin-left: 45px;
+    }
+    .storeCss{
+        font-size: 20px;
+        text-align: center;
+        align-content:center;
+    }
+    .CashReceiptCss{
+        font-size: 25px;
+        text-align: center;
+        align-content:center;
+        font-weight: bolder;
+        margin-top: -1.0cm;
+    }
+    .dateCss{
+        font-size: 20px;
+        text-align: center;
+        align-content:center;
+        margin-top: -1.0cm;
+    }
+
+    .nameCss{
+        font-size: 20px;
+        text-align: center;
+        align-content:center;
+
+    }
+
+    table{
+        margin-left: 0.8cm;
+    }
+
+
+    .quantityCss{
+        font-size: 20px;
+        text-align: end;
+        align-content:flex-end;
+    }
+
+    .priceCss{
+        font-size: 20px;
+        text-align: center;
+        align-content:center;
+    }
+
+    .subtotalCss{
+        font-size: 20px;
+        text-align: center;
+        align-content:center;
+    }
+    
+    .ThankYouCss{
+        font-size: 25px;
+        text-align: center;
+        align-content:center;
+        font-weight: bolder;
+        margin-top: -1.0cm;
+    }
+
+    .starCss{
+        margin-left: 0.2cm;
+        font-size: 20px;
+        margin-top: -0.3cm;
+    }
+
+    .bottomStarCss{
+        margin-left: 0.2cm;
+        font-size: 20px;
+        margin-top: 0.1cm;
+    }
+}

@@ -1,0 +1,214 @@
+<!-- <app-page-header [pageHeaderInfo]="pageHeaderInfo"></app-page-header> -->
+<nz-card
+  nzTitle="{{ 'Branding' | localize }}"
+  [nzExtra]="extraTemplate"
+>
+  <form nz-form nzLayout="vertical">
+    <nz-space>
+      <nz-form-item *nzSpaceItem>
+        <nz-form-label>{{ "HotelName" | localize }}</nz-form-label>
+        <nz-form-control>
+          <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              (change)="searchValue($event)"
+              nz-input
+              placeholder="{{ 'Name' | localize }}"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-space>
+  </form>
+
+  <ng-template #suffixIconSearch>
+    <span nz-icon nzType="search"></span>
+  </ng-template>
+
+  <nz-table
+    class="m-t-20"
+    #borderedTable
+    nzBordered
+    nzShowSizeChanger
+    [nzFrontPagination]="false"
+    [nzData]="brandings"
+    [nzTotal]="totalItems"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNumber"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    [nzFooter]="tableFooterTemplate"
+    [nzLoading]="isTableLoading"
+  >
+    <thead>
+      <tr>
+        <th>{{ "SerialNumber" | localize }}</th>
+        <th>{{ "Image" | localize }}</th>
+        <th>{{ "HotelName" | localize }}</th>
+        <th>{{ "PhoneNumber" | localize }}</th>
+        <th>{{ "HotelAddress" | localize }}</th>
+        <th>{{ "HotelDescription" | localize }}</th>
+        <th>{{ "Actions" | localize }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let branding of brandings">
+        <td>{{ branding.id }}</td>
+        <td>
+          <img
+            nz-image
+            class="image"
+            nzSrc="{{ branding.image }}"
+            [nzFallback]="fallback"
+            alt=""
+          />
+        </td>
+        <td>{{ branding.hotelName }}</td>
+        <td>{{ branding.phoneNumber }}</td>
+        <td>{{ branding.hotelAddress }}</td>
+        <td>{{ branding.hotelDescription }}</td>
+        <td>
+          <nz-space>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Edit' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                (click)="editBranding(branding)"
+                nzType="primary"
+              >
+                <i nz-icon nzType="edit" nzTheme="outline"></i></button
+            >
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Delete' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nzDanger
+                nz-button
+                nzType="primary"
+                (click)="showConfirm(branding.id)"
+              >
+                <i nz-icon nzType="delete" nzTheme="outline"></i></button
+            >
+          </nz-space>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #extraTemplate>
+  <nz-space>
+    <button *nzSpaceItem nz-button nzType="primary" (click)="refreshPage()">
+      <i nz-icon nzType="reload"></i>
+      {{ "Refresh" | localize }}
+    </button>
+      <button *nzSpaceItem nz-button nzType="primary" (click)="openDrawer()">
+        <i nz-icon nzType="plus"></i>
+        {{ "CreateBranding" | localize }}
+      </button>
+  </nz-space>
+</ng-template>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isDrawerVisible"
+  nzPlacement="right"
+  nzTitle="{{ 'CreateBranding' | localize }}"
+  (nzOnClose)="closeDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      nz-form
+      nzLayout="vertical"
+      [formGroup]="brandingForm"
+      (ngSubmit)="brandingFormSubmit()"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "HotelName" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'EnterHotelName' | localize }}">
+          <input
+            nz-input
+            formControlName="hotelName"
+            placeholder="{{ 'HotelName' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "PhoneNumber" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'EnterPhoneNumber' | localize }}">
+          <input
+            type="number"
+            nz-input
+            formControlName="phoneNumber"
+            placeholder="{{ 'PhoneNumber' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "HotelAddress" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'EnterHotelAddress' | localize }}">
+          <input
+            nz-input
+            formControlName="hotelAddress"
+            placeholder="{{ 'HotelAddress' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "HotelDescription" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'EnterHotelDescription' | localize }}">
+          <input
+            nz-input
+            formControlName="hotelDescription"
+            placeholder="{{ 'HotelDescription' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>{{ "Image" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'PleaseUploadImage' | localize }}">
+          <nz-upload
+            nzAction="https://localhost:44311/api/FileUploader/UploadImage"
+            [nzBeforeUpload]="beforeUpload"
+            nzListType="picture-card"
+            [(nzFileList)]="fileList"
+            [nzShowButton]="fileList.length < 1"
+            [nzPreview]="handlePreview"
+            (nzChange)="getFileUrl($event)"
+            [nzRemove]="handleRemove"
+          >
+            <div>
+              <span nz-icon nzType="plus"></span>
+              <div style="margin-top: 8px">{{ "Upload" | localize }}</div>
+            </div>
+          </nz-upload>
+          <nz-modal
+            [nzVisible]="previewVisible"
+            [nzContent]="modalContent"
+            [nzFooter]="null"
+            (nzOnCancel)="previewVisible = false"
+          >
+            <ng-template #modalContent>
+              <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+            </ng-template>
+          </nz-modal>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" [nzLoading]="isBrandingFormSaving">
+            {{ "Save" | localize }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-drawer>
+
+<ng-template class="text-left" #tableFooterTemplate>
+  {{ "TotalRecordsCount" | localize : totalItems }}
+</ng-template>

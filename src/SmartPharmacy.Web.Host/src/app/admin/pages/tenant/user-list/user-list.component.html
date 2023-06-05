@@ -1,0 +1,93 @@
+<nz-card
+  [nzExtra]="actionTemplate"
+  [nzBordered]="false"
+  nzTitle="{{ 'UserList' | localize }}"
+>
+  <label nz-checkbox (change)="activeUserOnlyChangeHandler($event)">{{
+    "IsActive" | localize
+  }}</label>
+
+  <nz-table
+    nzShowSizeChanger
+    class="m-t-30"
+    [nzFrontPagination]="false"
+    [nzData]="users"
+    [nzTotal]="totalItems"
+    nzSize="small"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNumber"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    [nzFooter]="tableFooterTemplate"
+    [nzLoading]="isTableLoading"
+  >
+    <thead>
+      <tr>
+        <th>{{ "SerialNumber" | localize }}</th>
+        <th>{{ "UserName" | localize }}</th>
+        <th>{{ "Name" | localize }}</th>
+        <th>{{ "Surname" | localize }}</th>
+        <th>{{ "EmailAddress" | localize }}</th>
+        <th>{{ "IsActive" | localize }}</th>
+        <th>{{ "FullName" | localize }}</th>
+        <th>{{ "LastLoginTime" | localize }}</th>
+        <th>{{ "CreationTime" | localize }}</th>
+        <th>{{ "Actions" | localize }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.id }}</td>
+        <td>{{ user.userName }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.surname }}</td>
+        <td>{{ user.emailAddress }}</td>
+        <td>{{ user.isActive }}</td>
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.lastLoginTime }}</td>
+        <td>{{ user.creationTime }}</td>
+
+        <td>
+          <nz-space>
+            <button
+              *nzSpaceItem
+              nzSize="small"
+              nzTooltipTitle="{{ 'ManagePermissions' | localize }}"
+              nzTooltipPlacement="top"
+              nz-tooltip
+              nz-button
+              [routerLink]="['/admin/user-permission']"
+              [queryParams]="{ userId: user.id, tenantId: this.tenantId }"
+              nzType="primary"
+            >
+              <i nz-icon nzType="key" nzTheme="outline"></i>
+            </button>
+            <button
+              *nzSpaceItem
+              nzSize="small"
+              nzTooltipTitle="{{ 'AuditLog' | localize }}"
+              nzTooltipPlacement="top"
+              [routerLink]="['/admin/audit-log']"
+              [queryParams]="{ tenantId: tenantId, userId: user.id }"
+              nz-tooltip
+              nz-button
+              nzType="primary"
+            >
+              <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+            </button>
+          </nz-space>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template class="text-left" #tableFooterTemplate>
+  {{ "TotalRecordsCount" | localize: totalItems }}
+</ng-template>
+
+<ng-template #actionTemplate>
+  <button nz-button nzType="primary" (click)="refreshPage()">
+    <i nz-icon nzType="reload"></i>
+    {{ "Refresh" | localize }}
+  </button>
+</ng-template>

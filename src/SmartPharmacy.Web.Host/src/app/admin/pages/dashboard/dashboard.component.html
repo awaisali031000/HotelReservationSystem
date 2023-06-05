@@ -1,0 +1,90 @@
+<nz-row class="full-width" nzGutter="12" nzExtra="content">
+  <nz-col [nzSpan]="6">
+    <nz-card>
+      <div class="flex space-between">
+        <div>
+          <p nz-typography nzType="secondary">
+            {{ "TotalTenants" | localize }}
+          </p>
+          <h2 class="m-0" nz-typography>
+            <span
+              ><strong>5</strong></span
+            >
+          </h2>
+        </div>
+        <nz-avatar
+          nzIcon="key"
+          [ngStyle]="{ 'background-color': '#3f87f5' }"
+          style="width: 50px; height: 50px; line-height: 50px; font-size: 25px"
+        ></nz-avatar>
+      </div>
+      <a>{{ "ShowDetails" | localize }}</a>
+    </nz-card>
+  </nz-col>
+  <nz-col [nzSpan]="6">
+    <nz-card>
+      <div class="flex space-between">
+        <div>
+          <p nz-typography nzType="secondary">
+            {{ "TotalUsers" | localize }}
+          </p>
+          <h2 class="m-0" nz-typography>
+            <span
+              ><strong>5</strong></span
+            >
+          </h2>
+        </div>
+        <nz-avatar
+          nzIcon="user"
+          [ngStyle]="{ 'background-color': '#00c9a7' }"
+          style="width: 50px; height: 50px; line-height: 50px; font-size: 25px"
+        ></nz-avatar>
+      </div>
+      <a>{{ "ShowDetails" | localize }}</a>
+    </nz-card>
+  </nz-col>
+  <nz-col [nzSpan]="6">
+    <nz-card>
+      <div class="flex space-between">
+        <div>
+          <p nz-typography nzType="secondary">
+            {{ "TotalActiveUsers" | localize }}
+          </p>
+          <h2 class="m-0" nz-typography>
+            <span
+              ><strong>5</strong></span
+            >
+          </h2>
+        </div>
+        <nz-avatar
+          nzIcon="usergroup-add"
+          [ngStyle]="{ 'background-color': '#de4436' }"
+          style="width: 50px; height: 50px; line-height: 50px; font-size: 25px"
+        ></nz-avatar>
+      </div>
+      <a>{{ "ShowDetails" | localize }}</a>
+    </nz-card>
+  </nz-col>
+  <nz-col [nzSpan]="6">
+    <nz-card>
+      <div class="flex space-between">
+        <div>
+          <p nz-typography nzType="secondary">
+            {{ "TotalInActiveUsers" | localize }}
+          </p>
+          <h2 class="m-0" nz-typography>
+            <span
+              ><strong>5</strong></span
+            >
+          </h2>
+        </div>
+        <nz-avatar
+          nzIcon="usergroup-delete"
+          [ngStyle]="{ 'background-color': '#ffc107' }"
+          style="width: 50px; height: 50px; line-height: 50px; font-size: 25px"
+        ></nz-avatar>
+      </div>
+      <a>{{ "ShowDetails" | localize }}</a>
+    </nz-card>
+  </nz-col>
+</nz-row>

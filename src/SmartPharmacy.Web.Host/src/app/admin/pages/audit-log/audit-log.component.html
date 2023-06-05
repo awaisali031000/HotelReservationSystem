@@ -1,0 +1,86 @@
+<nz-card
+  [nzExtra]="actionTemplate"
+  [nzBordered]="false"
+  nzTitle="{{ 'AuditLog' | localize }}"
+>
+  <label nz-checkbox (change)="exceptionOnlyChangeHandler($event)">{{
+    "ExceptionOnly" | localize
+  }}</label>
+
+  <nz-table
+    nzShowSizeChanger
+    class="m-t-30"
+    [nzFrontPagination]="false"
+    [nzData]="auditLogs"
+    [nzTotal]="totalItems"
+    nzSize="small"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNumber"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    [nzFooter]="tableFooterTemplate"
+    [nzLoading]="isTableLoading"
+  >
+    <thead>
+      <tr>
+        <th>{{ "SerialNumber" | localize }}</th>
+        <th>{{ "BrowserInfo" | localize }}</th>
+        <th>{{ "ClientIpAddress" | localize }}</th>
+        <th>{{ "MethodName" | localize }}</th>
+        <th>{{ "ServiceName" | localize }}</th>
+        <th>{{ "Actions" | localize }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let auditLog of auditLogs">
+        <td>{{ auditLog.id }}</td>
+        <td>{{ auditLog.browserInfo }}</td>
+        <td>{{ auditLog.clientIpAddress }}</td>
+        <td>{{ auditLog.methodName }}</td>
+        <td>{{ auditLog.serviceName }}</td>
+
+        <td>
+          <nz-space *ngIf="auditLog.exception">
+            <button
+              *nzSpaceItem
+              nzSize="small"
+              nzTooltipTitle="{{ 'ShowException' | localize }}"
+              nzTooltipPlacement="top"
+              nz-tooltip
+              nz-button
+              nzType="primary"
+              (click)="showException(auditLog)"
+            >
+              <i nz-icon nzType="edit" nzTheme="outline"></i>
+            </button>
+          </nz-space>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isDrawerVisible"
+  nzPlacement="right"
+  (nzOnClose)="closeDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <h2 nz-typography>{{ "Exception" | localize }}</h2>
+    <p nz-typography>{{ this.auditLog.exception }}</p>
+
+    <h2 nz-typography>{{ "ExceptionMessage" | localize }}</h2>
+    <p nz-typography>{{ this.auditLog.exceptionMessage }}</p>
+  </ng-container>
+</nz-drawer>
+
+<ng-template class="text-left" #tableFooterTemplate>
+  {{ "TotalRecordsCount" | localize: totalItems }}
+</ng-template>
+
+<ng-template #actionTemplate>
+  <button nz-button nzType="primary" (click)="refreshPage()">
+    <i nz-icon nzType="reload"></i>
+    {{ "Refresh" | localize }}
+  </button>
+</ng-template>

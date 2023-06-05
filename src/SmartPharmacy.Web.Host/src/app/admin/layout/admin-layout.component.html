@@ -1,0 +1,41 @@
+<nz-layout class="min-screen-full-height">
+  <nz-sider
+    class="menu-sidebar"
+    nzCollapsible
+    nzWidth="256px"
+    nzBreakpoint="md"
+    [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null"
+  >
+    <app-side-bar [isCollapsed]="isCollapsed"></app-side-bar>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <ng-container top-header>
+        <ng-container *ngTemplateOutlet="headerToolBar"></ng-container>
+      </ng-container>
+    </nz-header>
+    <nz-content>
+      <router-outlet></router-outlet>
+    </nz-content>
+    <nz-footer> Hotel Reservation System ©2022 Stallions Technologies </nz-footer>
+  </nz-layout>
+</nz-layout>
+
+<ng-template #headerToolBar>
+  <app-tool-bar>
+    <ng-container left>
+      <div style="z-index: 100">
+        <i
+          class="trigger"
+          nz-icon
+          [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+          (click)="isCollapsed = !isCollapsed"
+        ></i>
+      </div>
+    </ng-container>
+    <ng-container right>
+      <app-head-right-menu></app-head-right-menu>
+    </ng-container>
+  </app-tool-bar>
+</ng-template>

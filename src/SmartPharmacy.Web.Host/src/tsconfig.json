@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "lib": ["es6", "dom"],
+    "mapRoot": "./",
+    "module": "es2020",
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "outDir": "../dist/out-tsc",
+    "sourceMap": true,
+    "target": "es5",
+    "typeRoots": ["../node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@abp/*": ["../node_modules/abp-ng2-module/dist/src/*"],
+      "@app": ["./app"],
+      "@app/*": ["./app/*"],
+      "@store/*": ["./app/user/core/services/store/*"],
+      "@config/*": ["./app/user/config/*"],
+      "@core/*": ["./app/user/core/*"],
+      "@services/*": ["./app/user/core/services/http/*"],
+      "@utils/*": ["./app/user/utils/*"],
+      "@widget/*": ["./app/user/widget/*"],
+      "@env/*": ["environments/*"],
+      "@shared/*": ["./app/user/shared/*"],
+      "@assets/*": ["assets/*"],
+      "@node_modules/*": ["../node_modules/*"]
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "files": ["main.ts", "polyfills.ts"],
+  "include": ["typings.d.ts", "../src/**/*", "app/admin/pages/change-password/.module.ts"]
+}

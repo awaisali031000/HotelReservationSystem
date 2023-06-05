@@ -1,0 +1,247 @@
+<nz-card
+  [nzBordered]="false"
+  nzTitle="{{ 'Edition' | localize }}"
+  [nzExtra]="actionTemplate"
+>
+  <form nz-form nzLayout="vertical">
+    <nz-space>
+      <nz-form-item *nzSpaceItem>
+        <nz-form-label>{{ "EditionName" | localize }}</nz-form-label>
+        <nz-form-control>
+          <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              nz-input
+              placeholder="{{ 'EnterEditionName' | localize }}"
+              (change)="searchValue($event)"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-space>
+  </form>
+  <nz-table
+    nzShowSizeChanger
+    [nzFrontPagination]="false"
+    [nzData]="editions"
+    [nzTotal]="totalItems"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNumber"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    [nzFooter]="tableFooterTemplate"
+    [nzLoading]="isTableLoading"
+  >
+    <thead>
+      <tr>
+        <th>{{ "SerialNumber" | localize }}</th>
+        <th>{{ "Name" | localize }}</th>
+        <th>{{ "DisplayName" | localize }}</th>
+        <th>{{ "Actions" | localize }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let edition of editions">
+        <td>{{ edition.id }}</td>
+        <td>{{ edition.name }}</td>
+        <td>{{ edition.displayName }}</td>
+
+        <td>
+          <nz-space>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Edit' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                (click)="editEdition(edition)"
+                nzType="primary"
+              >
+                <i nz-icon nzType="edit" nzTheme="outline"></i>
+              </button>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'FeatureManagement' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                (click)="openFeatureManagementDrawer(edition.id)"
+                nzType="primary"
+              >
+                <i nz-icon nzType="setting" nzTheme="outline"></i>
+              </button>
+            <ng-container *ngIf="permissionsMap['deleteEdition']">
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Delete' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nzDanger
+                nz-button
+                nzType="primary"
+                (click)="showConfirm(edition.id)"
+              >
+                <i nz-icon nzType="delete" nzTheme="outline"></i>
+              </button>
+            </ng-container>
+          </nz-space>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #actionTemplate>
+  <nz-space>
+    <button *nzSpaceItem nz-button nzType="primary" (click)="refreshPage()">
+      <i nz-icon nzType="reload"></i>
+      {{ "Refresh" | localize }}
+    </button>
+      <button
+        *nzSpaceItem
+        nz-button
+        nzType="primary"
+        (click)="openCreateNewAdminEditionDrawer()"
+      >
+        <i nz-icon nzType="plus"></i>
+        {{ "CreateNewAdminEdition" | localize }}
+      </button>
+  </nz-space>
+</ng-template>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isCreateNewAdminEditionDrawerVisible1"
+  nzPlacement="right"
+  nzTitle="{{ 'CreateNewAdminEdition' | localize }}"
+  (nzOnClose)="closeCreateNewAdminEditionDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      nz-form
+      nzLayout="vertical"
+      [formGroup]="editionForm"
+      (ngSubmit)="editionFormSubmit()"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "Name" | localize }}</nz-form-label>
+        <nz-form-control nzErrorTip="Please Enter {{ 'Name' | localize }}">
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="{{ 'Name' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ "DisplayName" | localize }}</nz-form-label>
+        <nz-form-control
+          nzErrorTip="Please Enter {{ 'DisplayName' | localize }}"
+        >
+          <input
+            nz-input
+            formControlName="displayName"
+            placeholder="{{ 'DisplayName' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" [nzLoading]="isEditionFormSaving">
+            {{ "Save" | localize }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-drawer>
+
+<ng-template class="text-left" #tableFooterTemplate>
+  {{ "TotalRecordsCount" | localize: totalItems }}
+</ng-template>
+
+<ng-template #actionTemplate>
+  <button nz-button nzType="primary" (click)="openFeatureManagementDrawer()">
+    <i nz-icon nzType="plus"></i>
+  </button>
+</ng-template>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isFeatureManagementDrawerVisible"
+  nzPlacement="right"
+  nzTitle="{{ 'FeatureManagement' | localize }}"
+  (nzOnClose)="closeFeatureManagementDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      nz-form
+      nzLayout="vertical"
+      [formGroup]="featureForm"
+      (ngSubmit)="featureFormSubmit()"
+    >
+      <ng-container
+        *ngFor="
+          let formControlItem of featureFormControlItems.controls;
+          let i = index
+        "
+        formArrayName="features"
+      >
+        <nz-form-item [formGroupName]="i">
+          <ng-container
+            *ngIf="
+              formControlItem['value'].value === 'false' ||
+              formControlItem['value'].value === 'true'
+            "
+          >
+            <nz-form-label>{{
+              formControlItem.controls["name"].value | localize
+            }}</nz-form-label>
+            <nz-select formControlName="value">
+              <nz-option
+                nzValue="true"
+                nzLabel="{{ 'Yes' | localize }}"
+              ></nz-option>
+              <nz-option
+                nzValue="false"
+                nzLabel="{{ 'No' | localize }}"
+              ></nz-option>
+            </nz-select>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              formControlItem['value'].value !== 'false' &&
+              formControlItem['value'].value !== 'true'
+            "
+          >
+            <nz-form-label>{{
+              formControlItem.controls["name"].value | localize
+            }}</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                formControlName="value"
+                placeholder="{{
+                  formControlItem.controls['name'].value | localize
+                }}"
+              />
+            </nz-form-control>
+          </ng-container>
+        </nz-form-item>
+      </ng-container>
+      <nz-form-item>
+        <nz-form-control>
+          <button
+            nz-button
+            nzType="primary"
+            [nzLoading]="isManageFeatureFormSaving"
+          >
+            {{ "Save" | localize }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-drawer>

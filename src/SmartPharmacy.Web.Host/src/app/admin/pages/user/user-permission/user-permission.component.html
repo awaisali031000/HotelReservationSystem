@@ -1,0 +1,29 @@
+<!-- <app-page-header [pageHeaderInfo]="pageHeaderInfo"></app-page-header> -->
+
+<nz-card
+  class="m-t-30"
+  nzTitle="{{ 'AddPermission' | localize }}"
+  [nzExtra]="actionTemplate"
+>
+  <nz-tree
+    #nzTreeComponent
+    [nzData]="permissionNodes"
+    nzCheckable
+    nzMultiple
+    (nzClick)="nzEvent($event)"
+    (nzExpandChange)="nzEvent($event)"
+    (nzCheckBoxChange)="nzEvent($event)"
+  ></nz-tree>
+</nz-card>
+
+<ng-template #actionTemplate>
+  <button
+    nz-button
+    nzType="primary"
+    (click)="saveCheckedPermissions()"
+    [routerLink]="['/admin/user-list']"
+  >
+    <i nz-icon nzType="plus"></i>
+    {{ "SavePermission" | localize }}
+  </button>
+</ng-template>

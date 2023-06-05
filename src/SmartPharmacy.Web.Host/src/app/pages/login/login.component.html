@@ -1,0 +1,73 @@
+<div nz-row>
+  <div nz-col nzXs="24" nzSm="24" nzMd="16">
+    <div class="center min-screen-full-height">
+      <form
+        nz-form
+        [formGroup]="loginForm"
+        class="login-form"
+        nzLayout="vertical"
+        (ngSubmit)="submitForm()"
+      >
+        <h1 class="sp-28 center m-b-30" nz-typography>LOGIN</h1>
+        <nz-form-item>
+          <nz-form-label>Username</nz-form-label>
+          <nz-form-control nzErrorTip="Please input your username!">
+            <nz-input-group nzPrefixIcon="user">
+              <input
+                type="text"
+                nz-input
+                formControlName="userName"
+                [(ngModel)]="usernameValue"
+                placeholder="Username"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <div nz-row class="login-form-password-margin">
+            <div nz-col nzSpan="12">
+              <label>Password</label>
+            </div>
+            <div nz-col nzSpan="12">
+              <a class="login-form-forgot" [routerLink]="['/reset-password']"
+                >Forgot password</a
+              >
+            </div>
+          </div>
+          <nz-form-control nzErrorTip="Please input your password!">
+            <nz-input-group nzPrefixIcon="lock">
+              <input
+                type="password"
+                nz-input
+                formControlName="password"
+                placeholder="Password"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <div nz-row class="login-form-margin">
+          <div nz-col nzSpan="12">
+            <label nz-checkbox>Remember me</label>
+          </div>
+        </div>
+        <button
+          nz-button
+          class="login-form-button login-form-margin"
+          [nzType]="'primary'"
+          [nzLoading]="isLoginFormSubmitted"
+        >
+          Log in
+        </button>
+        <!-- <a class="signUp-form" [routerLink]="['/sign-up']">Sign Up</a> -->
+      </form>
+      <button
+        nz-button
+        class="signUp-form"
+        [nzType]="'primary'"
+        [routerLink]="['/sign-up']"
+      >
+        Sign Up
+      </button>
+    </div>
+  </div>
+</div>

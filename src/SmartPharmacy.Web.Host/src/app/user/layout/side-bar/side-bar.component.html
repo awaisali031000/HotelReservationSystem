@@ -1,0 +1,40 @@
+<div class="sidebar-logo">
+  <a href="https://ng.ant.design/" target="_blank">
+    <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo" />
+    <h1>Hotel Reservation System</h1>
+  </a>
+</div>
+<ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+  <ng-container *ngFor="let item of menuItems">
+    <li *ngIf="!item.items.length" nz-menu-item>
+      <a [routerLink]="[item.url]">
+        <i nz-icon [nzType]="item.icon"></i>
+        <span>{{ item.displayName }}</span></a
+      >
+    </li>
+    <li
+      *ngIf="item.items.length"
+      nz-submenu
+      [nzTitle]="[item.displayName]"
+      [nzIcon]="item.icon"
+    >
+      <ul>
+        <li *ngFor="let subItem of item.items" nz-menu-item>
+          <a [routerLink]="[subItem.url]"
+            ><span>{{ subItem.displayName }}</span></a
+          >
+        </li>
+      </ul>
+    </li>
+  </ng-container>
+</ul>
+
+<ng-template #singleMenuTemplate let-item>
+  <li nz-menu-item [nz-icon]="item.icon">
+    <a [routerLink]="[item.url]">{{ item.displayName }}</a>
+  </li>
+</ng-template>
+
+<ng-template #multiMenuTemplate let-item>
+  <li nz-submenu [nzTitle]="[item.displayName]" [nzIcon]="[item.icon]"></li>
+</ng-template>

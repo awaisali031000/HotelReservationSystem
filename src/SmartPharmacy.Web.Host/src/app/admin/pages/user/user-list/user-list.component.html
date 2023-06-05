@@ -1,0 +1,386 @@
+<nz-card
+  [nzBordered]="false"
+  nzTitle="{{ 'UserList' | localize }}"
+  [nzExtra]="actionsTemplate"
+>
+  <form nz-form nzLayout="vertical">
+    <nz-space>
+      <nz-form-item *nzSpaceItem>
+        <nz-form-label>{{ "UserName" | localize }}</nz-form-label>
+        <nz-form-control>
+          <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              nz-input
+              placeholder="{{ 'EnterUserName' | localize }}"
+              (change)="searchValue($event)"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-space>
+  </form>
+  <nz-table
+    nzShowSizeChanger
+    [nzFrontPagination]="false"
+    [nzData]="userList"
+    [nzTotal]="totalItems"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNumber"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    [nzFooter]="tableFooterTemplate"
+    [nzLoading]="isTableLoading"
+  >
+    <thead>
+      <tr>
+        <th span="1" style="width: 15%">
+          {{ "UserName" | localize }}
+        </th>
+        <th span="1" style="width: 15%">
+          {{ "FullName" | localize }}
+        </th>
+        <th span="1" style="width: 10%">
+          {{ "EmailAddress" | localize }}
+        </th>
+        <th span="1" style="width: 15%">
+          {{ "CreationTime" | localize }}
+        </th>
+        <th span="1" style="width: 10%">
+          {{ "IsActive" | localize }}
+        </th>
+        <th span="1" style="width: 10%">
+          {{ "Actions" | localize }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of userList">
+        <td>{{ user.userName }}</td>
+        <td style="padding: 0px">{{ user.fullName }}</td>
+        <td>{{ user.emailAddress }}</td>
+        <td>{{ user.creationTime }}</td>
+        <td>
+          <nz-badge
+            *ngIf="user.isActive; else inactiveBadgeTemplate"
+            nzStatus="success"
+            nzText="Active"
+          ></nz-badge>
+        </td>
+
+        <td>
+          <nz-space>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Edit' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                (click)="editUser(user)"
+                nzType="primary"
+              >
+                <i nz-icon nzType="edit" nzTheme="outline"></i>
+              </button>
+            <ng-container>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'ResetPassword' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nz-button
+                nzType="primary"
+                (click)="resetPassword(user.id)"
+              >
+                <i nz-icon nzType="undo" nzTheme="outline"></i>
+              </button>
+            </ng-container>
+              <button
+                *nzSpaceItem
+                nzSize="small"
+                nzTooltipTitle="{{ 'Delete' | localize }}"
+                nzTooltipPlacement="top"
+                nz-tooltip
+                nzDanger
+                nz-button
+                nzType="primary"
+                (click)="showDeleteConfirmModal(user.id)"
+              >
+                <i nz-icon nzType="delete" nzTheme="outline"></i>
+              </button>
+          </nz-space>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="showCreateOrEditUserDrawer"
+  nzPlacement="right"
+  nzTitle="{{ 'UserManager' | localize }}"
+  (nzOnClose)="closeCreateOrEditUserDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      nz-form
+      nzLayout="vertical"
+      [formGroup]="userForm"
+      (ngSubmit)="submitUserForm()"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="userName">{{
+          "UserName" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'PleaseEnterUserName' | localize }}">
+          <input
+            nz-input
+            formControlName="userName"
+            placeholder="{{ 'UserName' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="name">{{
+          "Name" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'PleaseEnterName' | localize }}">
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="{{ 'Name' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="surname">{{
+          "Surname" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'PleaseEnterSurname' | localize }}">
+          <input
+            nz-input
+            formControlName="surname"
+            placeholder="{{ 'Surname' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="emailAddress">{{
+          "EmailAddress" | localize
+        }}</nz-form-label>
+        <nz-form-control
+          nzErrorTip="{{ 'PleaseEnterEmailAddress' | localize }}"
+        >
+          <input
+            type="text"
+            nz-input
+            formControlName="emailAddress"
+            [(ngModel)]="emailValue"
+            placeholder="EmailAddress"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="roles">{{
+          "Role" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'RoleIsRequired' | localize }}">
+          <nz-select formControlName="role">
+            <nz-option
+              *ngFor="let role of roleList"
+              [nzLabel]="role.name"
+              [nzValue]="role.id"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="isActive">{{
+          "IsActive" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'IsActiveIsRequired' | localize }}">
+          <nz-select
+            nzPlaceHolder="{{ 'SelectTrue/False' | localize }}"
+            formControlName="isActive"
+            id="isActive"
+          >
+            <nz-option
+              nzLabel="{{ 'True' | localize }}"
+              nzValue="true"
+            ></nz-option>
+            <nz-option
+              nzLabel="{{ 'False' | localize }}"
+              nzValue="false"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="password">{{
+          "Password" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'PleaseEnterPassword' | localize }}">
+          <input
+            nz-input
+            type="password"
+            autocomplete="on"
+            formControlName="password"
+            placeholder="{{ 'Password' | localize }}"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" [nzLoading]="isUserFormSaving">
+            {{ "Save" | localize }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-drawer>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isResetPasswordVisible"
+  nzPlacement="right"
+  nzTitle="{{ 'CreateResetPassword' | localize }}"
+  (nzOnClose)="closeResetPasswordDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      nz-form
+      nzLayout="vertical"
+      [formGroup]="resetPasswordForm"
+      (ngSubmit)="resetPasswordFormSubmit()"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="adminPassword">{{
+          "AdminPassword" | localize
+        }}</nz-form-label>
+        <nz-form-control
+          nzErrorTip="{{ 'AdminPasswordIsRequired' | localize }}"
+        >
+          <nz-input-group [nzSuffix]="adminPasswordTemplate">
+            <input
+              nz-input
+              [type]="adminPasswordVisible ? 'text' : 'password'"
+              [(ngModel)]="adminPassword"
+              formControlName="adminPassword"
+              id="adminPassword"
+              placeholder="{{ 'AdminPassword' | localize }}"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="newPassword">{{
+          "NewPassword" | localize
+        }}</nz-form-label>
+        <nz-form-control nzErrorTip="{{ 'NewPasswordRequired' | localize }}">
+          <nz-input-group [nzSuffix]="newPasswordTemplate">
+            <input
+              nz-input
+              [type]="newPasswordVisible ? 'text' : 'password'"
+              [(ngModel)]="newPassword"
+              id="newPassword"
+              formControlName="newPassword"
+              placeholder="{{ 'NewPassword' | localize }}"
+              (ngModelChange)="updateConfirmValidator()"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="confirmPassword">{{
+          "ConfirmPassword" | localize
+        }}</nz-form-label>
+        <nz-form-control [nzErrorTip]="errorTpl">
+          <nz-input-group [nzSuffix]="confirmPasswordTemplate">
+            <input
+              nz-input
+              [type]="confirmPasswordVisible ? 'text' : 'password'"
+              [(ngModel)]="confirmPassword"
+              formControlName="confirmPassword"
+              id="confirmPassword"
+              placeholder="{{ 'ConfirmPassword' | localize }}"
+            />
+            <ng-template #errorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')"
+                >Please confirm your password!
+              </ng-container>
+              <ng-container *ngIf="control.hasError('confirm')">
+                Two passwords that you enter is inconsistent!
+              </ng-container>
+            </ng-template>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <button
+            nz-button
+            nzType="primary"
+            [nzLoading]="isResetPasswordFormSaving"
+          >
+            {{ "Save" | localize }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-drawer>
+
+<ng-template #inactiveBadgeTemplate>
+  <nz-badge nzStatus="error" nzText="InActive"></nz-badge>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <nz-space>
+    <button *nzSpaceItem nz-button nzType="primary" (click)="refresh()">
+      <i nz-icon nzType="reload"></i>
+      {{ "Refresh" | localize }}
+    </button>
+      <button
+        *nzSpaceItem
+        nz-button
+        nzType="primary"
+        (click)="openCreateOrEditUserDrawer()"
+      >
+        <i nz-icon nzType="plus"></i>
+        {{ "CreateUser" | localize }}
+      </button>
+  </nz-space>
+</ng-template>
+
+<ng-template class="text-left" #tableFooterTemplate>
+  {{ "TotalRecordsCount" | localize : totalItems }}
+</ng-template>
+
+<ng-template #newPasswordTemplate>
+  <i
+    nz-icon
+    [nzType]="newPasswordVisible ? 'eye-invisible' : 'eye'"
+    (click)="newPasswordVisible = !newPasswordVisible"
+  ></i>
+</ng-template>
+
+<ng-template #confirmPasswordTemplate>
+  <i
+    nz-icon
+    [nzType]="confirmPasswordVisible ? 'eye-invisible' : 'eye'"
+    (click)="confirmPasswordVisible = !confirmPasswordVisible"
+  ></i>
+</ng-template>
+
+<ng-template #adminPasswordTemplate>
+  <i
+    nz-icon
+    [nzType]="adminPasswordVisible ? 'eye-invisible' : 'eye'"
+    (click)="adminPasswordVisible = !adminPasswordVisible"
+  ></i>
+</ng-template>

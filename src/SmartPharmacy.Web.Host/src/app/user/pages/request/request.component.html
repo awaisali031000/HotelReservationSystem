@@ -1,0 +1,104 @@
+<nz-card
+  nzTitle="{{ 'Request' | localize }}"
+  [nzExtra]="extraTemplate"
+>
+  <form nz-form nzLayout="vertical">
+    <nz-space>
+      <nz-form-item *nzSpaceItem>
+        <nz-form-label>{{ "RoomName" | localize }}</nz-form-label>
+        <nz-form-control>
+          <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              nz-input
+              placeholder="{{ 'EnterRoomName' | localize }}"
+              (change)="searchValue($event)"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-space>
+  </form>
+
+  <ng-template #suffixIconSearch>
+    <span nz-icon nzType="search"></span>
+  </ng-template>
+
+  <div class="send-request">
+    <button
+      nz-button
+      nzType="primary"
+      [disabled]="setOfCheckedId.size === 0"
+      [nzLoading]="loading"
+      (click)="sendRequest()"
+    >
+      Send Request
+    </button>
+    <span>Selected {{ setOfCheckedId.size }} items</span>
+  </div>
+
+  <nz-table
+    class="m-t-20"
+    #rowSelectionTable
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+    #columnTable
+    #borderedTable
+    nzBordered
+    nzShowSizeChanger
+    [nzFrontPagination]="false"
+    [nzData]="rooms"
+    [nzTotal]="totalItems"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNumber"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    [nzFooter]="tableFooterTemplate"
+    [nzLoading]="isTableLoading"
+  >
+    <thead>
+      <tr>
+        <th
+        ></th>
+        <th>{{ "Image" | localize }}</th>
+        <th>{{ "RoomNumber" | localize }}</th>
+        <th>{{ "RoomName" | localize }}</th>
+        <th>{{ "CategoryName" | localize }}</th>
+        <th>{{ "Price" | localize }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of columnTable.data; let i = index">
+        <td
+          [nzChecked]="setOfCheckedId.has(product.id)"
+          [nzDisabled]="product.disabled"
+          (nzCheckedChange)="onItemChecked(product.id, $event)"
+        ></td>
+        <td>
+          <img
+            nz-image
+            class="image"
+            nzSrc="{{ product.image }}"
+            [nzFallback]="fallback"
+            alt=""
+          />
+        </td>
+        <td>{{ product.roomNumber }}</td>
+        <td>{{ product.roomName }}</td>
+        <td>{{ product.categoryName }}</td>
+        <td>{{ product.price }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #extraTemplate>
+  <nz-space>
+    <button *nzSpaceItem nz-button nzType="primary" (click)="refreshPage()">
+      <i nz-icon nzType="reload"></i>
+      {{ "Refresh" | localize }}
+    </button>
+  </nz-space>
+</ng-template>
+
+<ng-template class="text-left" #tableFooterTemplate>
+  {{ "TotalRecordsCount" | localize: customerPaymentReportTotalItems }}
+</ng-template>

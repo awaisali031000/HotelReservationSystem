@@ -1,0 +1,39 @@
+<ng-container *ngTemplateOutlet="headRight"></ng-container>
+<ng-template #headRight>
+  <div class="bst-header-wrap" id="tools">
+    <span
+      class="bst-header-icon"
+      nz-dropdown
+      [nzDropdownMenu]="userSettingMenu"
+    >
+      <img class="avatar" src="assets/imgs/default_face.png" alt="" />
+      <span class="base-font-size">{{ loginName }}</span>
+    </span>
+    <nz-dropdown-menu #userSettingMenu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item>
+          <a routerLink="/user/change-password"
+            ><i nz-icon nzType="lock" nzTheme="outline" class="m-r-8"></i
+            ><span> Change Password</span></a
+          >
+        </li>
+        <li nz-menu-divider></li>
+        <li nz-menu-item>
+          <a (click)="logout()">
+            <i nz-icon nzType="logout" nzTheme="outline" class="m-r-8"></i>
+            <span> Logout</span></a
+          >
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+
+    <span class="bst-header-icon" nz-dropdown [nzDropdownMenu]="language">
+      <i nz-icon nzType="global" nzTheme="outline"></i>
+    </span>
+    <nz-dropdown-menu #language="nzDropdownMenu">
+      <ul nz-menu nzSelectable>
+        <li nz-menu-item>English</li>
+      </ul>
+    </nz-dropdown-menu>
+  </div>
+</ng-template>
